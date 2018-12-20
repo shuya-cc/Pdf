@@ -9,8 +9,8 @@ import org.bson.Document;
 import org.json.JSONObject;
 
 public class HereMain {
-    static final String TXT_FILE_PATH = "resource/herecategory.txt";
-    static final String PDF_FILE_PATH = "resource/Places Extract v1.1.0 Category Guide.pdf";
+    static final String TXT_FILE_PATH = "D:/herecategory.txt";
+    static final String PDF_FILE_PATH = "D:/Places Extract v1.1.0 Category Guide.pdf";
 
 
     public static void main(String[] args) {
@@ -26,12 +26,14 @@ public class HereMain {
         temp.readFromTxt(TXT_FILE_PATH);
         System.out.println("parent size:" + temp.parentList.size());
         System.out.println("food type size:" + temp.foodTypeList.size());
+            temp.printAsJson();
         HereMain main = new HereMain();
         main.saveInMongoDB(temp.printAsJson(), Integer.parseInt(args[0]), args[1]);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
     public void saveInMongoDB(String json, int port, String collectionName) {
         MongoClient mongoClient = new MongoClient("localhost", port);

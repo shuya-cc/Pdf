@@ -18,8 +18,8 @@ import org.json.JSONObject;
 public class ParseTxtToJson {
     static final String FOOD_TYPES_SPLIT = "Chapter 3: Food Types.......";
     static final String CATEGORY_SYSTEM_SPLIT = "►  Places Category System";
-    static final String RESULT_FILE_PATH = "resource/HereCategoryResult.txt";
-    static final String RESULT_JSON_PATH = "resource/HereCategoryResult.json";
+    static final String RESULT_FILE_PATH = "D:/HereCategoryResult.txt";
+    static final String RESULT_JSON_PATH = "D:/HereCategoryResult.json";
 
 
     List<HereParentCategory> parentList = new ArrayList<HereParentCategory>();
@@ -90,6 +90,30 @@ public class ParseTxtToJson {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("provider", "Here");
             JSONArray jsonArray = new JSONArray();
+            for(HereParentCategory parent : parentList) {
+                JSONObject parentObj = new JSONObject();
+                parentObj.put("icon", "");
+                parentObj.put("id", parent.getParent());
+                parentObj.put("name", parent.getParent());
+                parentObj.put("parent", new JSONArray());
+                parentObj.put("provider", "here");
+                jsonArray.put(parentObj);
+            }
+
+
+            for(HereParentCategory parent : parentList) {
+                for(HereChildCategory child : parent.getChildList()) {
+                    JSONObject object = new JSONObject();
+                    JSONArray array = new JSONArray();
+                    array.put(parent.getParent());
+                    object.put("icon", "");
+                    object.put("id", child.getChild());
+                    object.put("name", child.getChild());
+                    object.put("parent", array);
+                    object.put("provider", "here");
+                    jsonArray.put(object);
+                }
+            }
 
             for(HereParentCategory parent : parentList) {
 
@@ -99,10 +123,15 @@ public class ParseTxtToJson {
                         String parentCtg = parent.getParent();
                         String childCtg = child.getChild();
                         JSONObject object = new JSONObject();
+                        object.put("icon", "");
+                        object.put("id", grandChild.getGrandChild());
+                        object.put("name", grandChild.getGrandChild());
                         object.put("code", grandChild.getCode());
-                        object.put("grandChild", grandChild.getGrandChild());
-                        object.put("child", childCtg);
-                        object.put("parent", parentCtg);
+                        JSONArray array = new JSONArray();
+                        array.put(child.getChild());
+                        object.put("parent", array);
+                        object.put("provider", "here");
+
                         jsonArray.put(object);
                     }
                 }
@@ -113,9 +142,23 @@ public class ParseTxtToJson {
                     String childCtg = child.getChild();
                     JSONObject object = new JSONObject();
                     object.put("code", grandChild.getCode());
-                    object.put("grandChild", grandChild.getGrandChild());
-                    object.put("child", childCtg);
-                    object.put("parent", "");
+                    object.put("parent", childCtg);
+                    String grandName = grandChild.getGrandChild();
+                    int index = -1;
+                    if(grandName.contains("-")) {
+                        index = grandName.indexOf(" ");
+                    }else {
+                        index = grandName.indexOf(" Food");
+                    }
+                    if(index > 0) {
+                        object.put("child", grandName.substring(0, index));
+                    }else {
+                        object.put("child", grandName);
+                    }
+
+
+//                    object.put("parent", "");
+
                     jsonArray.put(object);
                 }
             }
